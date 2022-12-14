@@ -1,5 +1,5 @@
 import Game from "Game";
-import {createGame, createPlayer, listPlayers} from "../api";
+import {createGame, createPlayer, listGames, listPlayers} from "../api";
 import Player from "../Player";
 
 type AppSyncEvent = {
@@ -21,9 +21,9 @@ export async function handler(
     case "listPlayers":
       return listPlayers();
     case "createGame":
-      return createGame(event.arguments.game)
+      return createGame(event.arguments.game);
     case "listGames":
-      return null
+      return listGames();
     default:
       return null;
   }

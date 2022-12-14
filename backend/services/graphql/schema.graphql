@@ -14,6 +14,7 @@ type PlayerCreateRes {
 }
 
 type Game {
+  id: ID!,
   p1: String!, 
   p2: String!, 
   p1Score: Int, 

@@ -2,6 +2,7 @@ import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocument } from "@aws-sdk/lib-dynamodb";
 import Game, { Winner } from "./Game";
 import Player from "./Player";
+import crypto from "crypto";
 
 const dynamo = new DynamoDBClient({ region: "us-east-1"});
 const client = DynamoDBDocument.from(dynamo)
@@ -26,7 +27,6 @@ export async function createGame(game: Game) {
     const expectedOutcome = game.winner === expectedWinner
     // Upsets exchange more points, scaled by rating difference
     const ratingChange = calcRatingChange(p1Rating, p2Rating, expectedOutcome)
-
     const p1NewRating = game.winner === Winner.p1 ? p1Rating + ratingChange : p1Rating - ratingChange 
     const p2NewRating = game.winner === Winner.p2 ? p2Rating + ratingChange : p2Rating - ratingChange 
 
@@ -49,7 +49,7 @@ export async function createGame(game: Game) {
       }
     })
 
-
+    game.id = crypto.randomUUID()
     // Save game for stats
     const res = await client.put({
       TableName: process.env.GAME_TABLE_NAME,
@@ -63,20 +63,39 @@ export async function createGame(game: Game) {
   return {error: null, game}
 }
 
+export async function listGames() {
+  try {
+    // TODO: Implement pagination to support more games
+    const res = await client.scan({
+      TableName: process.env.GAME_TABLE_NAME,
+      Limit: 250
+    })
+    return res.Items
+  } catch (e) {
+    console.log(e)
+    throw e
+  }
+}
 // Implement logic for uniqueness
 export async function createPlayer(player: Player) {
-  console.log("Creating player")
   try {
     const res = await client.put({
       TableName: process.env.PLAYER_TABLE_NAME,
-      Item: player
+      Item: player,
+      ConditionExpression: 'attribute_not_exists(#name)',
+      ExpressionAttributeNames: {
+        "#name": "name"
+      }
     })
-    console.log(res)
-    
   } catch (e) {
-    return {error: "NotCreated", player: null}
+      if (e.name === "ConditionalCheckFailedException") {
+        return {error: "PlayerExists", player: null}
+      } else {
+        return {error: "NotCreated", player: null}
+      }
   }
 
+  console.log("returning success")
   return { error: null, player }
 }
 

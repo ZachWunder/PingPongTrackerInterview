@@ -1,4 +1,12 @@
-# 
+# Ping Pong Score Tracker for Interview
+
+## To start development:
+`cd backend && AWS_PROFILE={profile} npm start -- --stage {stage}`
+
+`cd frontend && npm run dev`
+
+## Deployment
+
 
 ## Limitations
 - Only supports 250 players. Can easily add pagination on the backend and a "load more results" button on the front-end to fix this.

@@ -1,0 +1,16 @@
+import { MyStack } from "./ApiStack";
+import { App, use } from "@serverless-stack/resources";
+import { DbStack } from "./DbStack";
+
+export default function (app: App) {
+  app.setDefaultFunctionProps({
+    runtime: "nodejs16.x",
+    srcPath: "services",
+    bundle: {
+      format: "esm",
+    },
+
+  });
+
+  app.stack(DbStack).stack(MyStack);
+}

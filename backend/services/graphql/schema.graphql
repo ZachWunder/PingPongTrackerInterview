@@ -1,0 +1,50 @@
+enum Winner {
+  p1,
+  p2
+}
+
+type GameCreateRes {
+  game: Game,
+  error: String
+}
+
+type PlayerCreateRes {
+  player: Player,
+  error: String
+}
+
+type Game {
+  p1: String!, 
+  p2: String!, 
+  p1Score: Int, 
+  p2Score: Int!, 
+  winner: Winner!,
+}
+
+type Player {
+  name: String!,
+  rating: Int!,
+}
+
+input GameInput {
+  p1: String!, 
+  p2: String!, 
+  p1Score: Int, 
+  p2Score: Int!, 
+  winner: Winner!
+}
+
+input PlayerInput {
+  name: String!,
+  rating: Int!
+}
+
+type Query {
+  listGames: [Game]
+  listPlayers: [Player]
+}
+
+type Mutation {
+  createGame(game: GameInput): GameCreateRes
+  createPlayer(player: PlayerInput): PlayerCreateRes
+}

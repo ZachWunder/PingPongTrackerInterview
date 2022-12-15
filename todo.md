@@ -1,6 +1,5 @@
 # TODO
 - Create Redux slice for Players list
-- Create query for players list and load it in
 
 ## High-level
 - Hook up logic to back-end

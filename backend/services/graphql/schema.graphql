@@ -32,7 +32,6 @@ input GameInput {
   p2: String!, 
   p1Score: Int, 
   p2Score: Int!, 
-  winner: Winner!
 }
 
 input PlayerInput {

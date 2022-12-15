@@ -7,6 +7,7 @@ import crypto from "crypto";
 const dynamo = new DynamoDBClient({ region: "us-east-1"});
 const client = DynamoDBDocument.from(dynamo)
 
+// NOTE: Would create another function to take out rating logic to be unit tested.
 export async function createGame(game: Game) {
   try {
     // Calculate point spread between players
@@ -19,6 +20,14 @@ export async function createGame(game: Game) {
       TableName: process.env.PLAYER_TABLE_NAME,
       Key: {name: game.p2}
     })
+    
+    if (game.p1Score === game.p2Score) {
+      game.winner = Winner.tie
+    } else if (game.p1Score > game.p2Score) {
+      game.winner = Winner.p1
+    } else {
+      game.winner = Winner.p2
+    }
 
     // Calculate updated ratings based on rating difference
     const p1Rating = p1.Item?.rating
@@ -76,7 +85,7 @@ export async function listGames() {
     throw e
   }
 }
-// Implement logic for uniqueness
+
 export async function createPlayer(player: Player) {
   try {
     const res = await client.put({
@@ -87,7 +96,7 @@ export async function createPlayer(player: Player) {
         "#name": "name"
       }
     })
-  } catch (e) {
+  } catch (e: any) {
       if (e.name === "ConditionalCheckFailedException") {
         return {error: "PlayerExists", player: null}
       } else {

@@ -3,10 +3,15 @@
 ## To start development:
 `cd backend && AWS_PROFILE={profile} npm start -- --stage {stage}`
 
+After backend has finished: Set the `aws_appsync_apiKey` key property in `src/aws-exports.js` to the Appsync API key. This can be found in the AWS console -> Appsync -> Settings
 `cd frontend && npm run dev`
 
 ## Deployment
+`AWS_PROFILE={profile} npm run deploy --  --stage {stage}`
+Once finished deploying, set API key like in development and re-deploy.
 
+## Testing Strategy
+I didn't have time to implement testing. On the backend, I would create unit tests around `services/api.ts`. I would also setup an integration test suite to run the GraphQL queries on a live deployment. On the frontend, I like to use synthetic monitoring on a dev deployment. In production, I would use something like Datadog for monitoring (Error Tracking and Real User Monitoring).
 
 ## Limitations
 - Only supports 250 players. Can easily add pagination on the backend and a "load more results" button on the front-end to fix this.
@@ -15,6 +20,4 @@
 
 ## Design Choices
 - Used official USATT elo scoring system for calculating leaderboard.
-- Would normally go for Next.js and use server-side data fetching and rendering with optimistic updates. I would also consider Remix + Cloudflare Workers / Fly.io for small and global applications.
-- Would use Postgres over Dynamo for production applications.
-- Would use Prisma or other ORM and a better monolith structure to share types, queries/mutations and schema across front-end and back-end. Currently uses amplify codegen.
+- Would setup a better monolith structure to share types, queries/mutations and schema across front-end and back-end. Currently uses amplify codegen.

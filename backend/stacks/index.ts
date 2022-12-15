@@ -1,6 +1,7 @@
-import { MyStack } from "./ApiStack";
+import { ApiStack } from "./ApiStack";
 import { App, use } from "@serverless-stack/resources";
 import { DbStack } from "./DbStack";
+import { SiteStack } from "./SiteStack";
 
 export default function (app: App) {
   app.setDefaultFunctionProps({
@@ -12,5 +13,5 @@ export default function (app: App) {
 
   });
 
-  app.stack(DbStack).stack(MyStack);
+  app.stack(DbStack).stack(ApiStack).stack(SiteStack);
 }

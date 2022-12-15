@@ -29,36 +29,38 @@ export async function createGame(game: Game) {
       game.winner = Winner.p2
     }
 
-    // Calculate updated ratings based on rating difference
-    const p1Rating = p1.Item?.rating
-    const p2Rating = p2.Item?.rating
-    const expectedWinner = p1Rating > p2Rating ? Winner.p1 : Winner.p2
-    const expectedOutcome = game.winner === expectedWinner
-    // Upsets exchange more points, scaled by rating difference
-    const ratingChange = calcRatingChange(p1Rating, p2Rating, expectedOutcome)
-    const p1NewRating = game.winner === Winner.p1 ? p1Rating + ratingChange : p1Rating - ratingChange 
-    const p2NewRating = game.winner === Winner.p2 ? p2Rating + ratingChange : p2Rating - ratingChange 
+    if(game.winner !== Winner.tie) {
+      // Calculate updated ratings based on rating difference
+      const p1Rating = p1.Item?.rating
+      const p2Rating = p2.Item?.rating
+      const expectedWinner = p1Rating > p2Rating ? Winner.p1 : Winner.p2
+      const expectedOutcome = game.winner === expectedWinner
+      // Upsets exchange more points, scaled by rating difference
+      const ratingChange = calcRatingChange(p1Rating, p2Rating, expectedOutcome)
+      const p1NewRating = game.winner === Winner.p1 ? p1Rating + ratingChange : p1Rating - ratingChange 
+      const p2NewRating = game.winner === Winner.p2 ? p2Rating + ratingChange : p2Rating - ratingChange 
 
-    // Save new ratings
-    await client.update({
-      TableName: process.env.PLAYER_TABLE_NAME,
-      Key: { name: p1.Item?.name },
-      UpdateExpression: "set rating = :r",
-      ExpressionAttributeValues: {
-        ":r": p1NewRating
-      }
-    })
+      // Save new ratings
+      await client.update({
+        TableName: process.env.PLAYER_TABLE_NAME,
+        Key: { name: p1.Item?.name },
+        UpdateExpression: "set rating = :r",
+        ExpressionAttributeValues: {
+          ":r": p1NewRating
+        }
+      })
 
-    await client.update({
-      TableName: process.env.PLAYER_TABLE_NAME,
-      Key: { name: p2.Item?.name },
-      UpdateExpression: "set rating = :r",
-      ExpressionAttributeValues: {
-        ":r": p2NewRating
-      }
-    })
-
+      await client.update({
+        TableName: process.env.PLAYER_TABLE_NAME,
+        Key: { name: p2.Item?.name },
+        UpdateExpression: "set rating = :r",
+        ExpressionAttributeValues: {
+          ":r": p2NewRating
+        }
+      })
+    }
     game.id = crypto.randomUUID()
+    game.time = new Date().toISOString()
     // Save game for stats
     const res = await client.put({
       TableName: process.env.GAME_TABLE_NAME,

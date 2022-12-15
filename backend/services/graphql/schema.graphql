@@ -19,7 +19,7 @@ type Game {
   p2: String!, 
   p1Score: Int, 
   p2Score: Int!, 
-  winner: Winner!,
+  time: String
 }
 
 type Player {

@@ -10,6 +10,7 @@ type Game = {
   p1Score: number;
   p2Score: number;
   winner: Winner;
+  time: string;
 };
 
 export default Game;

@@ -3,12 +3,14 @@
 ## To start development:
 `cd backend && AWS_PROFILE={profile} npm start -- --stage {stage}`
 
-After backend has finished: Set the `aws_appsync_apiKey` key property in `src/aws-exports.js` to the Appsync API key. This can be found in the AWS console -> Appsync -> Settings
+After backend has finished: Update `src/aws-exports.js`. This can be found in the AWS console -> Appsync.
+
 `cd frontend && npm run dev`
 
 ## Deployment
 `AWS_PROFILE={profile} npm run deploy --  --stage {stage}`
-Once finished deploying, set API key like in development and re-deploy.
+
+Once finished deploying, set aws-exports like in development and re-deploy.
 
 ## Testing Strategy
 I didn't have time to implement testing. On the backend, I would create unit tests around `services/api.ts`. I would also setup an integration test suite to run the GraphQL queries on a live deployment. On the frontend, I like to use synthetic monitoring on a dev deployment. In production, I would use something like Datadog for monitoring (Error Tracking and Real User Monitoring).
